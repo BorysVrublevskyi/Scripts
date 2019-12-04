@@ -6,7 +6,7 @@ IF "%~3"=="" GOTO setdefault
 set /p id=<%3
 GOTO checkparams
 :setdefault
-set /p id=<id_rsa.pub
+set /p id=<%userprofile%\.ssh\id_rsa.pub
 :checkparams
 IF "%~1"=="" GOTO promptp
 IF "%~2"=="" GOTO promptp2
@@ -19,9 +19,11 @@ echo %id% | plink.exe %1 -pw %2 "umask 077; test -d .ssh || mkdir .ssh ; cat >> 
 GOTO end
 
 :promptp
-set /p user= "Enter username@remotehost.com: "
+set /p user= "Enter username@remotehost: "
 :promptp2
+echo "Before you enter your password, make sure no-one is looking!"
 set /p pw= "Enter password: "
+cls
 echo y | plink.exe %user% -pw %pw% "exit"
 echo %id% | plink.exe %user% -pw %pw% "umask 077; test -d .ssh || mkdir .ssh ; cat >> .ssh/authorized_keys"
 :end
